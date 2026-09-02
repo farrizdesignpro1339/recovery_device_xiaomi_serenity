@@ -184,7 +184,7 @@ TARGET_USES_LOGD := true
 TWRP_EVENT_LOGGING := true
 
 # Version
-TW_DEVICE_VERSION := KSN | Zyrexen
+TW_DEVICE_VERSION := FarrizDesignPro | Serenity
 
 # Gatekeeper is built by device.mk; the stock Trusty libraries are already
 # carried under recovery/root/vendor/lib64 for the vendor HAL namespace.
