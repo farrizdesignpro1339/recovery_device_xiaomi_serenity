@@ -1,3 +1,7 @@
+# Redmi A5 (serenity) - A17
+# NOTE: flashimg=1 removed from verified-boot / NV partitions on purpose.
+# Flashing unsigned images there bricks the device ("The system has been destroyed").
+# Keep backup=1 for reference only.
 # hi im zyrexen ;)
 
 /boot             emmc      /dev/block/by-name/boot              flags=display="Boot";slotselect;backup=1;flashimg=1
@@ -6,29 +10,29 @@
 /dtb              emmc      /dev/block/by-name/dtb               flags=display="DTB";slotselect;backup=1;flashimg=1
 /dtbo             emmc      /dev/block/by-name/dtbo              flags=display="DTBO";slotselect;backup=1;flashimg=1
 
-/vbmeta           emmc      /dev/block/by-name/vbmeta            flags=display="VBMeta";slotselect;backup=1;flashimg=1
-/vbmeta_system    emmc      /dev/block/by-name/vbmeta_system     flags=display="VBMeta System";slotselect;backup=1;flashimg=1
-/vbmeta_vendor    emmc      /dev/block/by-name/vbmeta_vendor     flags=display="VBMeta Vendor";slotselect;backup=1;flashimg=1
-/vbmeta_product   emmc      /dev/block/by-name/vbmeta_product    flags=display="VBMeta Product";slotselect;backup=1;flashimg=1
-/vbmeta_system_ext emmc     /dev/block/by-name/vbmeta_system_ext flags=display="VBMeta System_EXT";slotselect;backup=1;flashimg=1
-/vbmeta_odm       emmc      /dev/block/by-name/vbmeta_odm        flags=display="VBMeta ODM";slotselect;backup=1;flashimg=1
+/vbmeta           emmc      /dev/block/by-name/vbmeta            flags=display="VBMeta";slotselect;backup=1
+/vbmeta_system    emmc      /dev/block/by-name/vbmeta_system     flags=display="VBMeta System";slotselect;backup=1
+/vbmeta_vendor    emmc      /dev/block/by-name/vbmeta_vendor     flags=display="VBMeta Vendor";slotselect;backup=1
+/vbmeta_product   emmc      /dev/block/by-name/vbmeta_product    flags=display="VBMeta Product";slotselect;backup=1
+/vbmeta_system_ext emmc     /dev/block/by-name/vbmeta_system_ext flags=display="VBMeta System_EXT";slotselect;backup=1
+/vbmeta_odm       emmc      /dev/block/by-name/vbmeta_odm        flags=display="VBMeta ODM";slotselect;backup=1
 /avbmeta_rs       emmc      /dev/block/by-name/avbmeta_rs        flags=display="AVBMeta RS";slotselect;backup=1
 
 /super            emmc      /dev/block/by-name/super             flags=display="Super";backup=1;flashimg=1
 
-/persist_image    emmc      /dev/block/by-name/persist           flags=display="Persist / FRP Image";backup=1;flashimg=1
+/persist_image    emmc      /dev/block/by-name/persist           flags=display="Persist / FRP Image";backup=1
 /rescue           ext4      /dev/block/by-name/rescue            flags=display="Rescue Partition";backup=1
 /misc             emmc      /dev/block/by-name/misc              flags=display="Misc";backup=1
 /logo             emmc      /dev/block/by-name/logo              flags=display="Boot Logo";slotselect;backup=1;flashimg=1
 /fbootlogo        emmc      /dev/block/by-name/fbootlogo         flags=display="Fastboot Logo";backup=1;flashimg=1
 
-/spl              emmc      /dev/block/by-name/spl               flags=display="SPL";slotselect;backup=1;flashimg=1
-/uboot            emmc      /dev/block/by-name/uboot             flags=display="uBoot";slotselect;backup=1;flashimg=1
-/sml              emmc      /dev/block/by-name/sml               flags=display="SML (Crypto)";slotselect;backup=1;flashimg=1
-/tos              emmc      /dev/block/by-name/trustos           flags=display="TrustOS";slotselect;backup=1;flashimg=1
-/teecfg           emmc      /dev/block/by-name/teecfg            flags=display="TEE Config";slotselect;backup=1;flashimg=1
-/pm_sys           emmc      /dev/block/by-name/pm_sys            flags=display="PM Sys";slotselect;backup=1;flashimg=1
-/hypervisor       emmc      /dev/block/by-name/hypervsior        flags=display="Hypervisor";slotselect;backup=1
+/splloader  emmc      /dev/block/by-name/splloader  flags=display="SPL Loader";backup=1
+/splloader_bak emmc    /dev/block/by-name/splloader_bak flags=display="SPL Loader (backup)";backup=1
+/uboot            emmc      /dev/block/by-name/uboot             flags=display="uBoot";slotselect;backup=1
+/sml              emmc      /dev/block/by-name/sml               flags=display="SML (Crypto)";slotselect;backup=1
+/tos              emmc      /dev/block/by-name/trustos           flags=display="TrustOS";slotselect;backup=1
+/teecfg           emmc      /dev/block/by-name/teecfg            flags=display="TEE Config";slotselect;backup=1
+/pm_sys           emmc      /dev/block/by-name/pm_sys            flags=display="PM Sys";slotselect;backup=1
 
 /l_modem          emmc      /dev/block/by-name/l_modem           flags=display="LTE Modem";slotselect;backup=1
 /l_ldsp           emmc      /dev/block/by-name/l_ldsp            flags=display="LTE LDSP";slotselect;backup=1

@@ -1,16 +1,54 @@
-# TWRP Recovery device tree for Redmi A5 (serenity)
+# TWRP Recovery device tree for Redmi A5 (serenity) — Android 17
 
-Ported from [KSN2redawew/android_device_xiaomi_serenity-twrp](https://github.com/KSN2redawew/android_device_xiaomi_serenity-twrp).
+Ported and refreshed for Android 17. Lineage:
 
-## Thanks
+- Original port: [KSN2redawew/android_device_xiaomi_serenity-twrp](https://github.com/KSN2redawew/android_device_xiaomi_serenity-twrp)
+- Maintained reference tree: `recovery_device_xiaomi_serenity` (device/xiaomi/serenity, Android 15)
+- This tree: `output/xiaomi/serenity` — same structure and patches, updated to
+  **Global A17.0.4.0.XGWMIXM** (images dated 2026-11-07).
 
-[rtyutechstudio](https://github.com/rtyutechstudio) for patch drm
+## What changed vs. the A15 tree
 
-[Zyrexen](https://github.com/Zyrexen) for fstab and test twrp
-
-[Chillax](https://github.com/Chillax1143) Big Thanks (fixed full device tree)
-
-[danilaim](https://github.com/danilaim) Tester
+- `BOARD_BOOT_HEADER_VERSION` stays `4`; recovery lives inside `vendor_boot` on A17
+  (the A17 vendor_boot ramdisk *is* the recovery rootfs —
+  `system/bin/recovery`, ELF built for Android 37).
+- `recovery/root/system/etc/recovery.fstab` — verbatim from the A17 image
+  (`uni_custom` added, `/data` f2fs now uses `fscompress` + `atgc`).
+- `recovery/root/first_stage_ramdisk/fstab.serenity` — verbatim from A17.
+- `recovery/root/lib/modules/` — A17 kernel modules (154 `.ko`, kernel 6.18),
+  incl. `modules.load.recovery`.
+- `recovery/root/vendor/` — crypto HAL stack replaced with A17:
+  `android.hardware.security.keymint-unisoc.service.trusty` +
+  `android.hardware.gatekeeper-service.trusty` (AIDL KeyMint v5/v3,
+  "rust.trusty"), AIDL health v5, aggregate VINTF manifest +
+  compatibility matrix from stock A17. Reference A15 stack preserved in
+  `vendor.bak-a15/`.
+- `init.recovery.serenity.rc` — rewritten for A17: advertises Android 17 /
+  2026-10-01 patch to KeyMint, starts AIDL boot-control / health / KeyMint /
+  Gatekeeper services after hwservicemanager is up, all as `u:r:recovery:s0`
+  (the recovery sepolicy does not know the stock HAL domain labels).
+  The reference tree's dangling `boot-hal-1-2` / `health-hal-2-1` starts were
+  fixed to the actual service names (`vendor.boot-default`,
+  `vendor.sprd.boot-aidl-V1-recovery`, `vendor.health-default`).
+- `splpath_util_recovery.rc` + `system/bin/splpath_util_recovery` — stock A17
+  script copied into the tree (creates `spl_a`/`spl_b` by-name symlinks);
+  seclabel switched to `u:r:recovery:s0` (stock `create_spl_link_recovery`
+  domain does not exist in the PBRP recovery policy). The reference's
+  `create_splloader_dual_slot_byname_path.sh` is now redundant.
+- `system/etc/twrp.flags` — `flashimg=1` removed from all verified-boot /
+  NV partitions (vbmeta*, uboot, sml, tos, teecfg, modem/DSP, PMNV/NV);
+  `/spl` pointed at the real `splloader`/`splloader_bak`; bogus `/hypervisor`
+  entry dropped (typo + no such partition).
+- `device.mk` — HIDL health@2.x build packages removed (stock AIDL health
+  service in the ramdisk is used instead).
+- `prebuilt/dtb.img` — raw, uncompressed FDT extracted from `vendor_boot.img`
+  (Unisoc ums9230 / SERENITY 6H10). The kitchen's `dtb` was LZ4-legacy and was
+  moved to `dtb.img.lz4-legacy` for reference only.
+- `prebuilt/kernel` — ARM64 Image extracted from `boot.img` (reference only;
+  the build uses `TARGET_NO_KERNEL := true` and does not repack the kernel).
+- `VENDOR_SECURITY_PATCH` / `PLATFORM_SECURITY_PATCH` = `2026-10-01`.
+- Removed the skeleton's fake `2099-12-31` patch dates and `--flags 3`
+  vbmeta arguments. See note below.
 
 ## Build it yourself
 
@@ -23,64 +61,25 @@ cd ~/twrp
 repo init -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1
 repo sync
 
-git clone --depth=1 https://github.com/KSN2redawew/android_device_xiaomi_serenity-twrp device/xiaomi/serenity
+git clone /path/to/output/xiaomi/serenity device/xiaomi/serenity
 ```
 
-All commands below must be run from the Android source root (`~/twrp`), not
-from inside `device/xiaomi/serenity`.
+All commands below must be run from the Android source root (`~/twrp`),
+not from inside `device/xiaomi/serenity`.
 
 ### 2. Install the recovery patches
 
-The device tree contains one replacement source file and three patches:
-
-- `graphics_drm.cpp` adds the DRM/minui changes required by this display.
-- `libcxx_verbose_abort.patch` provides the newer libc++ ABI symbol required
-  by the stock Android 15 KeyMint libraries.
-- `vold_android15_keyblob.patch` enables KeyMint key-blob upgrades and fixes
-  handling of a successful operation that did not return an upgraded blob.
-- `vold_recovery_fscrypt_keyring.patch` creates the missing recovery fscrypt
-  session keyring so that FBE keys are not incorrectly retried as wrapped keys.
-
-Apply them in this order:
+(The device tree contains one replacement source file and three patches; these
+were written against the stock **Android 15** KeyMint libraries and have **not
+yet been re-audited against Android 17**. Verify them at build time.)
 
 ```shell
 cd ~/twrp
-
 cp device/xiaomi/serenity/patch/graphics_drm.cpp bootable/recovery/minuitwrp/graphics_drm.cpp
-
-git apply --check device/xiaomi/serenity/patch/libcxx_verbose_abort.patch
-git apply device/xiaomi/serenity/patch/libcxx_verbose_abort.patch
-
-git apply --check device/xiaomi/serenity/patch/vold_android15_keyblob.patch
-git apply device/xiaomi/serenity/patch/vold_android15_keyblob.patch
-
-git apply --check device/xiaomi/serenity/patch/vold_recovery_fscrypt_keyring.patch
-git apply device/xiaomi/serenity/patch/vold_recovery_fscrypt_keyring.patch
+git apply --check device/xiaomi/serenity/patch/libcxx_verbose_abort.patch && git apply device/xiaomi/serenity/patch/libcxx_verbose_abort.patch
+git apply --check device/xiaomi/serenity/patch/vold_android15_keyblob.patch && git apply device/xiaomi/serenity/patch/vold_android15_keyblob.patch
+git apply --check device/xiaomi/serenity/patch/vold_recovery_fscrypt_keyring.patch && git apply device/xiaomi/serenity/patch/vold_recovery_fscrypt_keyring.patch
 ```
-
-Do not apply a patch twice. To check whether all three patches are already
-installed, run:
-
-```shell
-cd ~/twrp
-
-git apply --reverse --check device/xiaomi/serenity/patch/libcxx_verbose_abort.patch &&
-    echo "libcxx patch: applied"
-
-git apply --reverse --check device/xiaomi/serenity/patch/vold_android15_keyblob.patch &&
-    echo "Android 15 vold patch: applied"
-
-git apply --reverse --check device/xiaomi/serenity/patch/vold_recovery_fscrypt_keyring.patch &&
-    echo "fscrypt keyring patch: applied"
-
-cmp device/xiaomi/serenity/patch/graphics_drm.cpp \
-    bootable/recovery/minuitwrp/graphics_drm.cpp &&
-    echo "DRM source: installed"
-```
-
-If `git apply --check` fails but the matching `git apply --reverse --check`
-succeeds, that patch is already installed. If both checks fail, the upstream
-source changed and the patch must be rebased instead of being forced.
 
 ### 3. Build vendor_boot
 
@@ -97,60 +96,16 @@ The resulting image is:
 out/target/product/serenity/vendor_boot.img
 ```
 
-Before flashing, verify both the recovery executable and the theme.
-The recovery executable must be a non-empty ARM64 ELF file; otherwise init
-fails with `Exec format error` and the phone remains on the Mi logo:
+Verify before flashing:
 
 ```shell
 test -s out/target/product/serenity/recovery/root/system/bin/recovery
 file out/target/product/serenity/recovery/root/system/bin/recovery
 test -f out/target/product/serenity/recovery/root/twres/splash.xml
 test -f out/target/product/serenity/recovery/root/twres/ui.xml
-test -f out/target/product/serenity/recovery/root/twres/languages/en.xml
 ```
 
-The `file` command must report an `ELF 64-bit ... ARM aarch64` executable and
-all four `test` commands must finish without an error. Missing `/twres` files
-cause the GUI process to crash and restart.
-
-If the recovery executable is empty after an interrupted build or a WSL
-filesystem error, regenerate the installed files from the already-built
-intermediates and repack `vendor_boot.img`:
-
-```shell
-cd ~/twrp
-source build/envsetup.sh
-lunch twrp_serenity-eng
-m installclean
-m vendorbootimage
-```
-
-Run the checks above again before flashing. `m installclean` does not perform a
-full source rebuild; it removes stale installed output so it can be recreated
-from valid intermediates.
-
-### Updating an existing source tree
-
-After replacing `device/xiaomi/serenity` with a newer copy, install the DRM
-source again and use the checks above before applying patches. `repo sync`
-normally preserves local changes in `external/libcxx` and `system/vold`; do not
-blindly reapply the patches after every sync.
-
-## Features
-
-Works:
-
-- [X] ADB
-- [X] Display
-- [X] Decryption
-- [X] Fastbootd
-- [X] Flashing
-- [X] MTP
-- [X] Sideload
-- [X] USB OTG
-- [X] Touchscreen
-
-## To use it:
+## To use it
 
 ```shell
 fastboot getvar current-slot
@@ -160,25 +115,17 @@ fastboot flash vendor_boot_a vendor_boot.img
 fastboot flash vendor_boot_b vendor_boot.img
 ```
 
-Flash the partition matching the current slot. Flashing only `vendor_boot_a`
-while the device is booting slot `b` leaves the old recovery image active.
+**This only works on a device with the bootloader unlocked (or otherwise able
+to boot custom vendor_boot). On a locked, enforcing device the custom image is
+rejected by verified boot — the screen will say "The system has been destroyed".**
 
-## Verify a new build
+## Credits
 
-After booting the newly flashed image, verify that the board-specific init file
-and the crypto services are active:
+- [KSN2redawew](https://github.com/KSN2redawew) — original serenity TWRP port
+- [farrizdesignpro](https://github.com/farrizdesignpro1339) — A15 tree maintenance / reference
+- rtyutechstudio, Zyrexen, Chillax, danilaim — original testing & patches
 
-```shell
-adb shell getprop ro.hardware
-adb shell getprop ro.boot.slot_suffix
-adb shell ps -A | grep -E "keymint|gatekeeper|keystore2"
-adb shell service check android.hardware.security.keymint.IKeyMintDevice/default
-adb shell lshal | grep -i gatekeeper
-```
-
-`ro.hardware` must be `serenity`. Save fresh logs before debugging decryption:
-
-```shell
-adb shell logcat -b all -d > logcat-new.txt
-adb shell dmesg > dmesg-new.txt
-```
+`prebuilt/kernel_dtb` (20 MB) is kept for reference and is not referenced by
+the build (`TARGET_NO_KERNEL := true`). `dtb.img.lz4-legacy` is the kitchen's
+LZ4-legacy variant of the same FDT, kept in case a future build uses
+`--dtb_compression=lz4`.

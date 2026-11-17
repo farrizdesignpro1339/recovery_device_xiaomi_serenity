@@ -1,0 +1,7 @@
+# Bawaan build/extraksi — jangan ikut ter-commit
+vendor.bak-a15/
+*.bak
+*.bak-a15
+prebuilt/kernel
+prebuilt/kernel_dtb
+prebuilt/dtb.img.lz4-legacy

@@ -18,11 +18,9 @@ PRODUCT_PACKAGES += \
     android.hardware.boot@1.2-service \
     vendor.sprd.hardware.boot@1.2-service
 
-# Health HAL
-PRODUCT_PACKAGES += \
-    android.hardware.health@2.0-impl \
-    android.hardware.health@2.1-impl \
-    android.hardware.health@2.1-service
+# Health: stock A17 provides the AIDL health service in the vendor_boot
+# ramdisk (android.hardware.health-service.example). The HIDL health@2.x
+# packages from the reference tree are unused and were removed.
 
 # Runtime dependency of the prebuilt Trusty Gatekeeper service.
 PRODUCT_PACKAGES += \

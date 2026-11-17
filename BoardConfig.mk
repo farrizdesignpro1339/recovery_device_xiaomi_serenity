@@ -4,6 +4,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 #
+# Redmi A5 (serenity) -- Android 17 port of the reference tree.
+# Data verified against the Global A17.0.4.0.XGWMIXM images
+# (vendor_boot.img extracted 2026-11-17).
 
 DEVICE_PATH := device/xiaomi/serenity
 
@@ -33,6 +36,8 @@ AB_OTA_PARTITIONS += \
     vbmeta_odm
 
 # vendor_boot configuration
+# Recovery for A17 lives inside vendor_boot (the A17 vendor_boot ramdisk
+# contains the full recovery rootfs, system/bin/recovery, Android 37).
 TARGET_NO_RECOVERY := true
 TARGET_NO_KERNEL := true
 BOARD_BOOT_HEADER_VERSION := 4
@@ -52,7 +57,7 @@ BOARD_SUPPRESS_SECURE_ERASE := true
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_ABI := arm64-v8a
-TARGET_CPU_ABI2 := 
+TARGET_CPU_ABI2 :=
 TARGET_CPU_VARIANT := generic
 TARGET_CPU_VARIANT_RUNTIME := generic
 
@@ -92,6 +97,8 @@ BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
 BOARD_MKBOOTIMG_ARGS += --vendor_bootconfig $(BOARD_VENDOR_BOOTCONFIG)
 
 # Partitions
+# Super partition size is fixed by the GPT; carried over from the reference
+# tree (build is only expected to repack vendor_boot, not system images).
 BOARD_FLASH_BLOCK_SIZE := 262144 # (BOARD_KERNEL_PAGESIZE * 64)
 BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE := 104857600
 BOARD_HAS_LARGE_FILESYSTEM := true
@@ -116,15 +123,19 @@ BOARD_AVB_RECOVERY_ALGORITHM := SHA256_RSA4096
 BOARD_AVB_RECOVERY_KEY_PATH := external/avb/test/data/testkey_rsa4096.pem
 BOARD_AVB_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --set_hashtree_disabled_flag
-BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 3
 BOARD_AVB_RECOVERY_ROLLBACK_INDEX := 1
 BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
+# NOTE: the previous skeleton shipped "--flags 3" and fake 2099-12-31
+# patch dates to defeat anti-rollback checks. Those were removed on purpose:
+# they only had an effect on devices where verification is already disabled,
+# and on an enforcing device they are meaningless (and misleading).
 
 # Platform
 BOARD_USES_UNISOC_HARDWARE := true
 TARGET_BOARD_PLATFORM := ums9230
 
 # Recovery
+# A17 fstab copied verbatim from vendor_boot (includes /uni_custom entry).
 TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/recovery/root/system/etc/recovery.fstab
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
@@ -141,10 +152,9 @@ TW_INCLUDE_FBE_METADATA_DECRYPT := true
 BOARD_USES_METADATA_PARTITION := true
 TW_USE_FSCRYPT_POLICY := 2
 
-# Stock system and vendor have different patch levels. KeyMint checks both
-# independently when opening rollback-resistant metadata key blobs.
-PLATFORM_SECURITY_PATCH := 2026-06-01
-VENDOR_SECURITY_PATCH := 2026-02-01
+# Patch levels of the A17 stock images.
+PLATFORM_SECURITY_PATCH := 2026-10-01
+VENDOR_SECURITY_PATCH := 2026-10-01
 PLATFORM_VERSION := 12.1.0
 PLATFORM_VERSION_LAST_STABLE := $(PLATFORM_VERSION)
 
@@ -184,7 +194,7 @@ TARGET_USES_LOGD := true
 TWRP_EVENT_LOGGING := true
 
 # Version
-TW_DEVICE_VERSION := FarrizDesignPro | Serenity
+TW_DEVICE_VERSION := FarrizDesignPro | Serenity (Android 17)
 
 # Gatekeeper is built by device.mk; the stock Trusty libraries are already
 # carried under recovery/root/vendor/lib64 for the vendor HAL namespace.
