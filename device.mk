@@ -78,12 +78,6 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/recovery/root/system/bin/create_splloader_dual_slot_byname_path.sh:recovery/root/system/bin/create_splloader_dual_slot_byname_path.sh \
     $(LOCAL_PATH)/recovery/root/system/etc/vintf/manifest.xml:recovery/root/system/etc/vintf/manifest.xml
 
-# PBRP's generated recovery ramdisk can omit /twres when recovery resources
-# are moved into vendor_boot.  Without the base theme, splash.xml and ui.xml
-# fail to load and the GUI later dereferences an empty page package.  Copy the
-# selected theme explicitly so both the splash screen and main UI are present.
-PRODUCT_COPY_FILES += \
-    $(call find-copy-subdir-files,*,bootable/recovery/gui/theme/common/fonts,recovery/root/twres/fonts) \
-    $(call find-copy-subdir-files,*,bootable/recovery/gui/theme/common/languages,recovery/root/twres/languages) \
-    bootable/recovery/gui/theme/common/portrait.xml:recovery/root/twres/portrait.xml \
-    $(call find-copy-subdir-files,*,bootable/recovery/gui/theme/portrait_hdpi,recovery/root/twres)
+# OrangeFox ships its own theme out of vendor/recovery/Files/classic_theme
+# (packaged by bootable/recovery automatically). TWRP's gui/theme/common path
+# does not exist in OrangeFox 16.0, so the legacy theme copy steps were dropped.
