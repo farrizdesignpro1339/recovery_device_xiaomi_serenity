@@ -152,12 +152,10 @@ TW_INCLUDE_FBE_METADATA_DECRYPT := true
 BOARD_USES_METADATA_PARTITION := true
 TW_USE_FSCRYPT_POLICY := 2
 
-# Patch levels of the A17 stock images.
+# Patch levels of the A17 stock images. (PLATFORM_VERSION is build-system
+# managed; setting it here made the CTS compatibility checker fail on Android 16.)
 PLATFORM_SECURITY_PATCH := 2026-10-01
 VENDOR_SECURITY_PATCH := 2026-10-01
-# Base target is Android 16 (AOSP 16). Pure version marker for builds.
-PLATFORM_VERSION := 16.0.0
-PLATFORM_VERSION_LAST_STABLE := $(PLATFORM_VERSION)
 
 # TWRP Configuration
 TW_FRAMERATE := 60
