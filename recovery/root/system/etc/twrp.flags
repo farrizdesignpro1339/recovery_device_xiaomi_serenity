@@ -1,14 +1,14 @@
 # Redmi A5 (serenity) - A17
-# NOTE: flashimg=1 removed from verified-boot / NV partitions on purpose.
+# NOTE: flashimg=1 removed from ALL verified-boot / NV partitions on purpose.
 # Flashing unsigned images there bricks the device ("The system has been destroyed").
 # Keep backup=1 for reference only.
 # hi im zyrexen ;)
 
-/boot             emmc      /dev/block/by-name/boot              flags=display="Boot";slotselect;backup=1;flashimg=1
-/init_boot        emmc      /dev/block/by-name/init_boot         flags=display="Init Boot";slotselect;backup=1;flashimg=1
-/vendor_boot      emmc      /dev/block/by-name/vendor_boot       flags=display="Vendor Boot";slotselect;backup=1;flashimg=1
-/dtb              emmc      /dev/block/by-name/dtb               flags=display="DTB";slotselect;backup=1;flashimg=1
-/dtbo             emmc      /dev/block/by-name/dtbo              flags=display="DTBO";slotselect;backup=1;flashimg=1
+/boot             emmc      /dev/block/by-name/boot              flags=display="Boot";slotselect;backup=1
+/init_boot        emmc      /dev/block/by-name/init_boot         flags=display="Init Boot";slotselect;backup=1
+/vendor_boot      emmc      /dev/block/by-name/vendor_boot       flags=display="Vendor Boot";slotselect;backup=1
+/dtb              emmc      /dev/block/by-name/dtb               flags=display="DTB";slotselect;backup=1
+/dtbo             emmc      /dev/block/by-name/dtbo              flags=display="DTBO";slotselect;backup=1
 
 /vbmeta           emmc      /dev/block/by-name/vbmeta            flags=display="VBMeta";slotselect;backup=1
 /vbmeta_system    emmc      /dev/block/by-name/vbmeta_system     flags=display="VBMeta System";slotselect;backup=1
@@ -18,7 +18,7 @@
 /vbmeta_odm       emmc      /dev/block/by-name/vbmeta_odm        flags=display="VBMeta ODM";slotselect;backup=1
 /avbmeta_rs       emmc      /dev/block/by-name/avbmeta_rs        flags=display="AVBMeta RS";slotselect;backup=1
 
-/super            emmc      /dev/block/by-name/super             flags=display="Super";backup=1;flashimg=1
+/super            emmc      /dev/block/by-name/super             flags=display="Super";backup=1
 
 /persist_image    emmc      /dev/block/by-name/persist           flags=display="Persist / FRP Image";backup=1
 /rescue           ext4      /dev/block/by-name/rescue            flags=display="Rescue Partition";backup=1
@@ -61,13 +61,13 @@
 /sysdumpdb        emmc      /dev/block/by-name/sysdumpdb         flags=display="Sysdump DB";backup=1
 /uboot_log        emmc      /dev/block/by-name/uboot_log         flags=display="uBoot Log";backup=1
 
-/system_image     emmc      /dev/block/mapper/system             flags=display="System Image";logical;backup=1;flashimg=1
-/system_ext_image emmc      /dev/block/mapper/system_ext         flags=display="System_EXT Image";logical;backup=1;flashimg=1
-/vendor_image     emmc      /dev/block/mapper/vendor             flags=display="Vendor Image";logical;backup=1;flashimg=1
-/product_image    emmc      /dev/block/mapper/product            flags=display="Product Image";logical;backup=1;flashimg=1
-/odm_image        emmc      /dev/block/mapper/odm                flags=display="ODM Image";logical;backup=1;flashimg=1
-/vendor_dlkm_image emmc     /dev/block/mapper/vendor_dlkm        flags=display="Vendor_DLKM Image";logical;backup=1;flashimg=1
-/system_dlkm_image emmc     /dev/block/mapper/system_dlkm        flags=display="System_DLKM Image";logical;backup=1;flashimg=1
+/system_image     emmc      /dev/block/mapper/system             flags=display="System Image";logical;backup=1
+/system_ext_image emmc      /dev/block/mapper/system_ext         flags=display="System_EXT Image";logical;backup=1
+/vendor_image     emmc      /dev/block/mapper/vendor             flags=display="Vendor Image";logical;backup=1
+/product_image    emmc      /dev/block/mapper/product            flags=display="Product Image";logical;backup=1
+/odm_image        emmc      /dev/block/mapper/odm                flags=display="ODM Image";logical;backup=1
+/vendor_dlkm_image emmc     /dev/block/mapper/vendor_dlkm        flags=display="Vendor_DLKM Image";logical;backup=1
+/system_dlkm_image emmc     /dev/block/mapper/system_dlkm        flags=display="System_DLKM Image";logical;backup=1
 
 /external_sd      vfat      /dev/block/mmcblk1p1  /dev/block/mmcblk1  flags=display="MicroSD Card";storage;wipeingui;removable
 /usb_otg          auto      /dev/block/sda1       /dev/block/sda      flags=display="USB-OTG";storage;wipeingui;removable
