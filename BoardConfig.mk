@@ -155,7 +155,8 @@ TW_USE_FSCRYPT_POLICY := 2
 # Patch levels of the A17 stock images.
 PLATFORM_SECURITY_PATCH := 2026-10-01
 VENDOR_SECURITY_PATCH := 2026-10-01
-PLATFORM_VERSION := 12.1.0
+# Base target is Android 16 (AOSP 16). Pure version marker for builds.
+PLATFORM_VERSION := 16.0.0
 PLATFORM_VERSION_LAST_STABLE := $(PLATFORM_VERSION)
 
 # TWRP Configuration

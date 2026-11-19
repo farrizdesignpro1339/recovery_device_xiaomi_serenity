@@ -65,9 +65,9 @@ PRODUCT_PACKAGES += \
     dump.erofs.recovery \
     fsck.erofs.recovery
 
-# VNDK
-PRODUCT_TARGET_VNDK_VERSION := 32
-PRODUCT_SHIPPING_API_LEVEL := 32
+# VNDK for Android 16
+PRODUCT_TARGET_VNDK_VERSION := 36
+PRODUCT_SHIPPING_API_LEVEL := 36
 
 PRODUCT_PACKAGES += \
     android.hardware.fastboot@1.0-impl-mock \
