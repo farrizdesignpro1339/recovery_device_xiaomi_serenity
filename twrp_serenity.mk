@@ -4,6 +4,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 #
+# Single source of truth for the serenity OrangeFox build product.
+# (Formerly a separate omni_serenity.mk existed here as an Omni-build
+# duplicate; it was removed — OrangeFox builds only.)
 
 # Release name
 PRODUCT_RELEASE_NAME := serenity
@@ -23,7 +26,7 @@ $(call inherit-product, $(DEVICE_PATH)/device.mk)
 # Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := serenity
 PRODUCT_NAME := twrp_serenity
-PRODUCT_BRAND := Xiaomi
+PRODUCT_BRAND := Redmi
 PRODUCT_MODEL := serenity
 PRODUCT_MANUFACTURER := Xiaomi
 
