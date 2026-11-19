@@ -60,6 +60,11 @@ PRODUCT_PACKAGES += \
 # Dynamic partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
+# Android 16 prebuilt ELF check requires 16 KB page alignment.
+# The upstream magiskboot prebuilt is 4 KB aligned; ignore the check instead
+# of patching the prebuilt binary (which we don't ship).
+PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE := false
+
 PRODUCT_PACKAGES += \
     mkfs.erofs.recovery \
     dump.erofs.recovery \
