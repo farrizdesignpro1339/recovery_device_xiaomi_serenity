@@ -9,5 +9,4 @@ PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/twrp_serenity.mk
 
 COMMON_LUNCH_CHOICES := \
-    twrp_serenity-eng \
-    twrp_serenity-bp2a-eng
+    twrp_serenity-cp2a-eng
